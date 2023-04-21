@@ -13,7 +13,7 @@ local Window = Library:CreateWindow({
     -- Position and Size are also valid options here
     -- but you do not need to define them unless you are changing them :)
 
-    Title = 'FrostyCardGui V:2',
+    Title = 'FrostyCardGui V:2.2',
     Center = true,
     AutoShow = true,
     TabPadding = 8
@@ -39,9 +39,13 @@ local FrostyCardGui = {
         MultiEquip = {},
         AutoEquip = false,
         ToolName = "None",
+        ToolName2 = "None",
+        ToolName3 = "None",
+        ToolName4 = "None",
         EquipToolBar = false,
        },
        EggFarmConfigs = {
+          FiscusServerHop = false,
           EggFarming = false,
           Mode = "Normal",
         },
@@ -51,6 +55,9 @@ local FrostyCardGui = {
           SelectedOreMode = false,
           OreSelected = "Crystal",
         },
+        BringMobsConfig = {
+          Bringing = false,
+        },
       },
 }
 
@@ -58,6 +65,7 @@ local Tabs = {
     -- Creates a new tab titled Main
     Main = Window:AddTab('Main'),
     Teleporters = Window:AddTab('Teleporters'),
+    Credits = Window:AddTab('Credits'),
     ['UI Settings'] = Window:AddTab('UI Settings'),
 }
 
@@ -65,6 +73,7 @@ local LeftGroupBox = Tabs.Main:AddLeftGroupbox('Main')
 
 local LeftGroupBoxes = {
     LeftGroupTeleporter = Tabs.Teleporters:AddLeftGroupbox('Mine'),
+    LeftGroupCredits = Tabs.Credits:AddLeftGroupbox('Main Credits'),
     LeftGroupMain2 = Tabs.Main:AddLeftGroupbox('Misc'),
 }
 
@@ -86,6 +95,14 @@ local Tab2 = TabBox:AddTab('Tab 2')
 ]]
 
 --//Functions\\
+
+
+for i, v in pairs(game.Workspace:GetChildren()) do -- delete anticheat mob
+	if v.Name == "f3sA+m5j6lJawxHjxJgW/LzLlhhZVGEh1ZdWucC2ZIs=" then
+		v:Destroy()
+	end
+end
+
 local _speed= 200
 function tp(...)
    local plr=game.Players.LocalPlayer
@@ -158,7 +175,7 @@ return currentOre
 end
 
 local function Cprint(text, value)
-    if not FrostyCardGui.Debug then return end
+if FrostyCardGui.Debug then
 
 if value ~= nil then
    print(text, value)
@@ -166,6 +183,20 @@ else
     print(text)
 end
 
+end
+
+end
+
+local function GetNpc()
+local CurrentNpc = nil
+
+for i ,v in  workspace:GetDescendants() do
+   if v:FindFirstChild("Humanoid") and v:FindFirstChild("EnemyMain") and v:FindFirstChild("Humanoid").Health > 0 then
+    CurrentNpc = v
+end
+end
+
+return CurrentNpc
 end
 
 
@@ -199,6 +230,23 @@ local function GetPickaxe()
     }
     
     game:GetService("Players").LocalPlayer.Character[Pickaxe].RemoteFunction:InvokeServer(unpack(args))
+end
+
+local function ServerHopFiscus()
+   if not workspace:FindFirstChild("Fiscus") then
+     local module = loadstring(game:HttpGet"https://raw.githubusercontent.com/sheeshmainlol/skillissues/main/ServerHopModule")()
+
+     module:Teleport(game.PlaceId)
+     task.wait(5)
+   else
+      repeat task.wait() until not workspace:FindFirstChild("Fiscus")
+        task.wait(5)
+        local module = loadstring(game:HttpGet"https://raw.githubusercontent.com/sheeshmainlol/skillissues/main/ServerHopModule")()
+
+        if FrostyCardGui.GuiConfigs.EggFarmConfigs.FiscusServerHop then
+        module:Teleport(game.PlaceId)
+        end
+   end
 end
 
 local SafePart = Instance.new("Part",Workspace)
@@ -250,6 +298,17 @@ LeftGroupBox:AddToggle('EggFarm', {
     Callback = function(Value)
         Cprint('[Gui] MyToggle changed to:', Value)
         FrostyCardGui.GuiConfigs.EggFarmConfigs.EggFarming = Value
+    end
+})
+
+LeftGroupBox:AddToggle('FiscusServerHop', {
+    Text = 'Fiscus ServerHop',
+    Default = false, -- Default value (true / false)
+    Tooltip = 'Toggle Fiscus Server Hop', -- Information shown when you hover over the toggle
+
+    Callback = function(Value)
+        Cprint('[Gui] MyToggle changed to:', Value)
+        FrostyCardGui.GuiConfigs.EggFarmConfigs.FiscusServerHop = Value
     end
 })
 
@@ -309,6 +368,18 @@ LeftGroupBox:AddToggle('MineFarm', {
         Cprint('[Gui] MyToggle changed to:', Value)
         FrostyCardGui.GuiConfigs.OreFarmConfigs.OreFarming = Value
         Cprint(FrostyCardGui.GuiConfigs.OreFarmConfigs.OreFarming)
+    end
+})
+
+
+LeftGroupBox:AddToggle('BringMobs', {
+    Text = 'Bring Mobs (not working maybe i will not unpatch it)',
+    Default = false, -- Default value (true / false)
+    Tooltip = 'Toggle Bring Mobs', -- Information shown when you hover over the toggle
+
+    Callback = function(Value)
+        Cprint('[Gui] MyToggle changed to:', Value)
+        FrostyCardGui.GuiConfigs.BringMobsConfig.Bringing = Value
     end
 })
 
@@ -388,6 +459,74 @@ LeftGroupBoxes.LeftGroupMain2:AddInput('ToolName', {
         FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName = Value
     end
 })
+
+LeftGroupBoxes.LeftGroupMain2:AddInput('ToolName2', {
+    Default = 'None',
+    Numeric = false, -- true / false, only allows numbers
+    Finished = false, -- true / false, only calls callback when you press enter
+
+    Text = 'Tool Name 2',
+    Tooltip = 'Tool Name For The Auto Equip', -- Information shown when you hover over the textbox
+
+    Placeholder = 'Tool Name', -- placeholder text when the box is empty
+    -- MaxLength is also an option which is the max length of the text
+
+    Callback = function(Value)
+        Cprint('[Gui] Text updated. New text:', Value)
+        FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName2 = Value
+    end
+})
+
+LeftGroupBoxes.LeftGroupMain2:AddInput('ToolName3', {
+    Default = 'None',
+    Numeric = false, -- true / false, only allows numbers
+    Finished = false, -- true / false, only calls callback when you press enter
+
+    Text = 'Tool Name 3',
+    Tooltip = 'Tool Name For The Auto Equip', -- Information shown when you hover over the textbox
+
+    Placeholder = 'Tool Name', -- placeholder text when the box is empty
+    -- MaxLength is also an option which is the max length of the text
+
+    Callback = function(Value)
+        Cprint('[Gui] Text updated. New text:', Value)
+        FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName3 = Value
+    end
+})
+
+LeftGroupBoxes.LeftGroupMain2:AddInput('ToolName4', {
+    Default = 'None',
+    Numeric = false, -- true / false, only allows numbers
+    Finished = false, -- true / false, only calls callback when you press enter
+
+    Text = 'Tool Name 4',
+    Tooltip = 'Tool Name For The Auto Equip', -- Information shown when you hover over the textbox
+
+    Placeholder = 'Tool Name 4', -- placeholder text when the box is empty
+    -- MaxLength is also an option which is the max length of the text
+
+    Callback = function(Value)
+        Cprint('[Gui] Text updated. New text:', Value)
+        FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName4 = Value
+    end
+})
+
+--[[LeftGroupBoxes.LeftGroupMain2:AddInput('ToolName5', {
+    Default = 'None',
+    Numeric = false, -- true / false, only allows numbers
+    Finished = false, -- true / false, only calls callback when you press enter
+
+    Text = 'Tool Name 5',
+    Tooltip = 'Tool Name For The Auto Equip', -- Information shown when you hover over the textbox
+
+    Placeholder = 'Tool Name 5', -- placeholder text when the box is empty
+    -- MaxLength is also an option which is the max length of the text
+
+    Callback = function(Value)
+        Cprint('[Gui] Text updated. New text:', Value)
+        FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName4 = Value
+    end
+})--]]
 
 LeftGroupBoxes.LeftGroupMain2:AddToggle('AutoEquip', {
     Text = 'Auto Equip',
@@ -549,36 +688,55 @@ end
 end
 end)
 
-------------------------------------------------------------------
 
-
-
---//Auto Clicker\\
-
+--//Bring Mobs\\
 
 task.spawn(function()
-    while true do task.wait()
-    if FrostyCardGui.GuiConfigs.AutoClickerConfigs.AutoClicking then
-    pcall(function()
-    game:GetService("VirtualUser"):ClickButton1(Vector2.new(125,125))
+while true do task.wait()
+if FrostyCardGui.GuiConfigs.BringMobsConfig.Bringing then
+pcall(function()
+
+local Npc = GetNpc()
+
+if Npc and Npc:FindFirstChild("HumanoidRootPart") and Npc.Humanoid.Health > 0 then
+game.Players.LocalPlayer.Character.Sword.RemoteFunction:InvokeServer("hit", { Npc.Humanoid, 80 })
+Npc.HumanoidRootPart.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(0,0,-3)
+Npc.HumanoidRootPart.Anchored = true
+end
+
 end)
 end
 end
 end)
 
 ------------------------------------------------------------------
---//Auto Equip\\
+
+------------------------------------------------------------------
+--//Auto Equip And Auto Clicker\\
 
 task.spawn(function()
     while true do task.wait()
-    if FrostyCardGui.GuiConfigs.AutoEquipConfigs.AutoEquip then
-    pcall(function()
-        local Plr = game.Players.LocalPlayer
-        if Plr.Backpack:FindFirstChild(FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName) and Plr.Character:FindFirstChild(FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName) == nil then
-             local tool = Plr.Backpack:FindFirstChild(FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName)
-             Plr.Character.Humanoid:EquipTool(tool)
+
+
+    --AutoClicker--
+    task.spawn(function()
+        if FrostyCardGui.GuiConfigs.AutoClickerConfigs.AutoClicking then
+            pcall(function()
+            game:GetService("VirtualUser"):ClickButton1(Vector2.new(125,125))
+        end)
         end
-end)
+    end)
+
+
+    --AutoEquip--
+    if FrostyCardGui.GuiConfigs.AutoEquipConfigs.AutoEquip then --Moon Aroma Code
+   -- pcall(function()
+        for i,v in game.Players.LocalPlayer.Backpack:GetChildren() do
+           if v:IsA("Tool") and v.Name == FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName or v.Name == FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName2 or v.Name == FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName3 or v.Name == FrostyCardGui.GuiConfigs.AutoEquipConfigs.ToolName4 and game.Players.LocalPlayer.Character:FindFirstChild(v.Name) == nil then
+              v.Parent = game.Players.LocalPlayer.Character
+           end
+        end
+--end)
 end
 
     if FrostyCardGui.GuiConfigs.AutoEquipConfigs.EquipToolBar then
@@ -591,8 +749,24 @@ end
 end)
 end
 
+   --ServerHop--
+   task.spawn(function()
+    if FrostyCardGui.GuiConfigs.EggFarmConfigs.FiscusServerHop then
+        warn("FiscusServerHop")
+        ServerHopFiscus()
+     end
+   end)
+
 end
 end)
+
+------------------------------------------------------------------
+
+--//Credits\\
+
+LeftGroupBoxes.LeftGroupCredits:AddLabel('FrostyCard - Scripts', true)
+
+--n\nWe\'re gonna run out of UI space...\nJust kidding! Scroll down!\n\n\nHello from below!
 
 ------------------------------------------------------------------
 
